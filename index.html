@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beat My Bot - Chess Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>Beat My Bot</h1>
+        <div id="play-as" class="compact-choice">
+            <p>Play as:</p>
+            <div class="color-buttons">
+                <button onclick="setPlayerColor('w')">White</button>
+                <button onclick="setPlayerColor('b')">Black</button>
+            </div>
+        </div>
+        <div id="chessboard"></div>
+        <div id="status">Choose your color to start</div>
+        <div id="options">
+            <button onclick="restartGame()">Restart Game</button>
+            <button onclick="undoMove()">Undo Move</button>
+            <button onclick="flipBoard()">Flip Board</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
