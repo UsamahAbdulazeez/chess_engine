@@ -2,6 +2,12 @@ let board = null;
 let game = new Chess();
 let playerColor = null;
 let selectedPiece = null;
+let isMobile = false;
+
+// Detect if the user is on a mobile device
+function detectMobileDevice() {
+    isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+}
 
 const pieceImages = {
     'wP': 'https://images.chesscomfiles.com/chess-themes/pieces/neo/150/wp.png',
@@ -24,14 +30,13 @@ function getPieceImage(piece) {
 
 function highlightLegalMoves(square) {
     removeHighlights();
-    var moves = game.moves({
+    const moves = game.moves({
         square: square,
         verbose: true
     });
 
-    if (moves.length === 0) return;
-
     moves.forEach(move => {
+<<<<<<< Updated upstream
         $(`#${move.to}`).addClass('highlight-move');
     });
 
@@ -40,33 +45,42 @@ function highlightLegalMoves(square) {
 
 function removeHighlights() {
     $('.square-55d63').removeClass('highlight-square highlight-move');
+=======
+        $(`.square[data-square='${move.to}']`).addClass('highlight-move');
+    });
+
+    $(`.square[data-square='${square}']`).addClass('highlight-source');
+}
+
+function removeHighlights() {
+    $('.square').removeClass('highlight-move highlight-source');
+>>>>>>> Stashed changes
 }
 
 function onDragStart(source, piece) {
-    if (game.game_over()) return false;
-    if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+    if (game.game_over() || 
+        (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+        (game.turn() === 'b' && piece.search(/^w/) !== -1) ||
+        (playerColor && piece.charAt(0) !== playerColor)) {
         return false;
     }
-    if (playerColor && piece.charAt(0) !== playerColor) return false;
+
     highlightLegalMoves(source);
+    return true;
 }
 
 function onDrop(source, target) {
     removeHighlights();
-    var move = game.move({
+    const move = game.move({
         from: source,
         to: target,
         promotion: 'q'
     });
 
     if (move === null) return 'snapback';
+
     updateStatus();
     setTimeout(makeAIMove, 250);
-}
-
-function onSnapEnd() {
-    board.position(game.fen());
 }
 
 function onClickSquare(square) {
@@ -91,11 +105,13 @@ function onClickSquare(square) {
             setTimeout(makeAIMove, 250);
         } else {
             selectedPiece = null;
-            onClickSquare(square);
+            removeHighlights();
+            onClickSquare(square);  // Retry selection
         }
     }
 }
 
+<<<<<<< Updated upstream
 function initBoard() {
     const config = {
         draggable: true,
@@ -110,8 +126,56 @@ function initBoard() {
     };
     board = Chessboard('chessboard', config);
     updateStatus();
+=======
+function onMouseoverSquare(square, piece) {
+    if (isMobile) return; // Don't highlight on mobile devices
+
+    const moves = game.moves({
+        square: square,
+        verbose: true
+    });
+
+    if (moves.length === 0) return;
+
+    $(`.square[data-square='${square}']`).addClass('highlight-source');
+
+    moves.forEach(move => {
+        $(`.square[data-square='${move.to}']`).addClass('highlight-move');
+    });
 }
 
+function onMouseoutSquare(square, piece) {
+    if (isMobile) return; // Don't remove highlights on mobile devices
+    removeHighlights();
+>>>>>>> Stashed changes
+}
+
+function onSnapEnd() {
+    board.position(game.fen());
+}
+
+function initBoard() {
+    detectMobileDevice();
+
+    const config = {
+        draggable: true, // Enable drag-and-drop for all devices
+        position: 'start',
+        pieceTheme: getPieceImage,
+        onDragStart: onDragStart,
+        onDrop: onDrop,
+        onMouseoverSquare: onMouseoverSquare,
+        onMouseoutSquare: onMouseoutSquare,
+        onSnapEnd: onSnapEnd,
+        onSquareClick: onClickSquare // Add click handler for all devices
+    };
+
+    board = Chessboard('chessboard', config);
+
+    updateStatus();
+    customizeBoardColors();
+}
+
+// Additional functionality: AI moves and handling game status
 function makeAIMove() {
     if (game.game_over()) return;
 
@@ -139,6 +203,16 @@ function updateStatus() {
     $('#status').text(status);
 }
 
+function customizeBoardColors() {
+    $('.square').each(function() {
+        if ($(this).hasClass('white-1e1d7')) {
+            $(this).css('background-color', '#004445');
+        } else {
+            $(this).css('background-color', '#002222');
+        }
+    });
+}
+
 function restartGame() {
     game.reset();
     board.start();
@@ -159,6 +233,10 @@ function undoMove() {
 
 function flipBoard() {
     board.flip();
+<<<<<<< Updated upstream
+=======
+    customizeBoardColors();
+>>>>>>> Stashed changes
 }
 
 function setPlayerColor(color) {
@@ -169,16 +247,32 @@ function setPlayerColor(color) {
     // Flip the board if the user selects black
     if (color === 'b') {
         board.flip();
+<<<<<<< Updated upstream
         setTimeout(makeAIMove, 250); // AI makes the first move
+=======
+        customizeBoardColors();
+        setTimeout(makeAIMove, 250);
+>>>>>>> Stashed changes
     }
 }
 
 $(document).ready(function() {
+    detectMobileDevice();
     $('#play-as').show();
+    initBoard();
+
+    // Add touch event listeners for mobile devices
+    if (isMobile) {
+        $('#chessboard').on('touchstart', '.square-55d63', function(e) {
+            const square = $(this).attr('data-square');
+            onClickSquare(square);
+        });
+    }
 });
 
 $(window).on('resize', function() {
     if (board !== null) {
         board.resize();
+        customizeBoardColors();
     }
 });

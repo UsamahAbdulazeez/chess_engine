@@ -1,3 +1,4 @@
+/* General Styles */
 body {
   background-color: #1a1a1a;
   color: #d0e1e1;
@@ -8,6 +9,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  overflow: hidden;
 }
 
 #game-container {
@@ -16,27 +18,25 @@ body {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 500px;
-  padding: 20px;
+  max-width: 100vw;
+  height: 100vh;
+  padding: 15px;
   box-sizing: border-box;
-  background-color: #1a1a1a;
-  border: 2px solid #333;
-  border-radius: 15px;
 }
 
 h1 {
   color: #d0e1e1;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   text-align: center;
 }
 
 #play-as {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 #play-as p {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .color-buttons {
@@ -49,13 +49,12 @@ button {
   background-color: #1c4b4a;
   border: none;
   color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  font-size: 16px;
+  padding: 8px 12px;
+  font-size: 14px;
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s ease;
+  min-width: 100px;
 }
 
 button:hover {
@@ -64,23 +63,119 @@ button:hover {
 
 #chessboard {
   width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
+  margin: 10px 0;
 }
 
 #status {
-  margin: 20px 0;
+  margin: 10px 0;
   text-align: center;
 }
 
 #options {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
+  width: 100%;
 }
 
+/* Button Container Styles */
+.button-container {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* PC View Styles */
+@media (min-width: 768px) {
+  #game-container {
+    max-width: 80vw;
+    max-height: 90vh;
+  }
+
+  button {
+    font-size: 14px;
+  }
+
+  #chessboard {
+    max-width: 500px;
+    max-height: 500px;
+  }
+}
+
+/* Updated Mobile Styles */
+@media (max-width: 768px) {
+  #game-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 10px;
+  }
+
+  h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  #chessboard {
+    max-width: 100vw;
+    max-height: calc(100vh - 190px); /* Adjusted to push board up */
+    margin: 0;
+  }
+
+  #status {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+
+  .button-container {
+    margin-top: 5px;
+  }
+
+  button {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+/* Enhanced Small Mobile Styles */
+@media (max-width: 480px) {
+  #game-container {
+    padding-top: 5px;
+    padding-bottom: 10px;
+  }
+
+  h1 {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+
+  #chessboard {
+    max-height: calc(100vh - 160px); /* Adjust chessboard height */
+    max-width: calc(100vw - 20px); /* Provide some margin on sides */
+  }
+
+  #status {
+    font-size: 12px;
+    padding: 5px 0;
+  }
+
+  .button-container {
+    margin-top: 10px;
+    gap: 5px;
+  }
+
+  button {
+    padding: 6px 8px;
+    font-size: 11px;
+    min-width: 80px; /* Reduced minimum width for smaller buttons */
+  }
+}
+
+<<<<<<< Updated upstream
 .highlight-square {
   box-shadow: inset 0 0 3px 3px yellow;
 }
@@ -88,3 +183,68 @@ button:hover {
 .highlight-move {
   box-shadow: inset 0 0 3px 3px green;
 }
+=======
+/* Board square colors */
+.white-1e1d7 {
+  background-color: #004445 !important;
+}
+
+.black-3c85d {
+  background-color: #002222 !important;
+}
+
+/* Further reduce visibility of board notation */
+.notation-322f9 {
+  color: rgba(208, 225, 225, 0.2) !important;
+  font-size: 10px !important;
+}
+
+/* Highlight styles */
+.square-55d63.highlight1-32417,
+.square-55d63.highlight2-9c5d2 {
+  box-shadow: inset 0 0 3px 3px rgba(0, 255, 255, 0.5) !important;
+  background-color: rgba(0, 255, 255, 0.2) !important;
+}
+
+.highlight1-32417 {
+  box-shadow: inset 0 0 3px 3px rgba(0, 255, 255, 0.5) !important;
+  background-color: rgba(0, 255, 255, 0.2) !important;
+}
+
+.highlight2-9c5d2 {
+  box-shadow: inset 0 0 3px 3px rgba(255, 0, 0, 0.5) !important;
+  background-color: rgba(255, 0, 0, 0.2) !important;
+}
+
+/* Illegal move highlight */
+.square-55d63.illegal-move {
+  background-color: maroon !important;
+  transition: background-color 0.5s ease;
+}
+
+/* Override any inline styles for highlights */
+.square-55d63 {
+  box-shadow: none !important;
+}
+
+/* Additional styles for pieces */
+#chessboard .piece {
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+  transition: transform 0.2s ease;
+}
+
+/* Subtle hover effect */
+#chessboard .piece:hover {
+  transform: scale(1.05);
+}
+
+/* Further reduce brightness of white pieces */
+#chessboard .piece.w {
+  filter: brightness(70%) contrast(100%) drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
+/* Make black pieces stand out even more */
+#chessboard .piece.b {
+  filter: brightness(60%) contrast(130%) drop-shadow(0 0 3px rgba(0, 0, 0, 0.8));
+}
+>>>>>>> Stashed changes
