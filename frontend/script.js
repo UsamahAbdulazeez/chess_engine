@@ -191,7 +191,10 @@ function restartGame() {
     playerColor = null;
     selectedPiece = null;
     updateStatus();
-    $('#play-as').show();
+    $('#play-as').show();  // Show the color selection buttons again
+    $('#chessboard').hide();  // Hide the chessboard
+    $('#status').hide();  // Hide the status message
+    $('.button-container').hide();  // Hide the game buttons
 }
 
 function undoMove() {
@@ -210,9 +213,12 @@ function flipBoard() {
 
 function setPlayerColor(color) {
     playerColor = color;
-    $('#play-as').hide();
+    $('#play-as').hide();  // Hide the color selection buttons
+    $('#chessboard').show();  // Show the chessboard
+    $('#status').show();  // Show the status message
+    $('.button-container').show();  // Show the game buttons
     initBoard();
-    
+
     // Flip the board if the user selects black
     if (color === 'b') {
         board.flip();
@@ -224,7 +230,9 @@ function setPlayerColor(color) {
 $(document).ready(function() {
     detectMobileDevice();
     $('#play-as').show();
-    initBoard();
+    $('#chessboard').hide();  // Hide the chessboard on load
+    $('#status').hide();  // Hide the status message on load
+    $('.button-container').hide();  // Hide the game buttons on load
 
     // Add touch event listeners for mobile devices
     if (isMobile) {

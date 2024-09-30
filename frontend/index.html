@@ -11,25 +11,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
 </head>
 <body>
-    <div id="game-container">
-        <h1>Beat My Bot</h1>
-        <div id="play-as" class="compact-choice">
-            <p>Play as:</p>
-            <div class="color-buttons">
-                <button onclick="setPlayerColor('w')">White</button>
-                <button onclick="setPlayerColor('b')">Black</button>
+    <div class="center-container">
+        <div id="game-container">
+            <h1>Beat My Bot</h1>
+            <div id="play-as" class="compact-choice">
+                <p>Play as:</p>
+                <div class="color-buttons">
+                    <button onclick="setPlayerColor('w')">White</button>
+                    <button onclick="setPlayerColor('b')">Black</button>
+                </div>
+            </div>
+            <div id="chessboard"></div>
+            <div id="status">Choose your color to start</div>
+            <div id="options">
+                <div class="button-container">
+                    <button onclick="restartGame()">Restart Game</button>
+                    <button onclick="undoMove()">Undo Move</button>
+                    <button onclick="flipBoard()">Flip Board</button>
+                </div>
             </div>
         </div>
-        <div id="chessboard"></div>
-        <div id="status">Choose your color to start</div>
-        <div id="options">
-            <div class="button-container">
-                <button onclick="restartGame()">Restart Game</button>
-                <button onclick="undoMove()">Undo Move</button>
-                <button onclick="flipBoard()">Flip Board</button>
-            </div>
-        </div>
-        
     </div>
     <script src="script.js"></script>
 </body>

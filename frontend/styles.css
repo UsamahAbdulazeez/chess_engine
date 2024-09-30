@@ -8,31 +8,43 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+}
+
+/* Centering container */
+.center-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px; /* Restrict the max width for a cleaner look */
+    margin: 0 auto; /* Ensure it centers horizontally */
 }
 
 #game-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 100vw;
-  height: 100vh;
-  padding: 15px;
-  box-sizing: border-box;
 }
 
 h1 {
   color: #d0e1e1;
-  margin-bottom: 10px;
   text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  padding: 5px 15px;
+  background-color: rgba(0, 51, 51, 0.7);
+  display: inline-block;
+  border-radius: 8px;
+  width: auto; /* Adjust width to fit content */
+  max-width: 100%; /* Prevent it from exceeding the container width */
 }
 
 #play-as {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 #play-as p {
@@ -61,14 +73,26 @@ button:hover {
   background-color: #2a6462;
 }
 
+/* Hide chessboard and status initially */
+#chessboard, #status {
+  display: none;
+}
+
 #chessboard {
   width: 100%;
-  margin: 10px 0;
+  max-width: 500px;
+  margin: 0 auto 10px auto; /* 10px space added between the chessboard and status */
 }
 
 #status {
-  margin: 10px 0;
+  margin: 30px 0 20px 0;
   text-align: center;
+  box-shadow: none;
+  padding: 6px 12px;
+  background-color: rgba(0, 51, 51, 0.7);
+  display: inline-block;
+  border-radius: 8px;
+  font-size: 16px;
 }
 
 #options {
@@ -79,7 +103,7 @@ button:hover {
 
 /* Button Container Styles */
 .button-container {
-  display: flex;
+  display: none;
   flex-wrap: nowrap;
   justify-content: center;
   gap: 10px;
@@ -93,7 +117,7 @@ button:hover {
 @media (min-width: 768px) {
   #game-container {
     max-width: 80vw;
-    max-height: 90vh;
+    max-height: 100vh;
   }
 
   button {
@@ -102,7 +126,8 @@ button:hover {
 
   #chessboard {
     max-width: 500px;
-    max-height: 500px;
+    max-height: calc(85vh - 150px);
+    margin-top: 20px;
   }
 }
 
@@ -122,7 +147,7 @@ button:hover {
 
   #chessboard {
     max-width: 100vw;
-    max-height: calc(100vh - 190px); /* Adjusted to push board up */
+    max-height: calc(100vh - 190px);
     margin: 0;
   }
 
@@ -154,8 +179,8 @@ button:hover {
   }
 
   #chessboard {
-    max-height: calc(100vh - 160px); /* Adjust chessboard height */
-    max-width: calc(100vw - 20px); /* Provide some margin on sides */
+    max-height: calc(100vh - 160px);
+    max-width: calc(100vw - 20px);
   }
 
   #status {
@@ -171,7 +196,7 @@ button:hover {
   button {
     padding: 6px 8px;
     font-size: 11px;
-    min-width: 80px; /* Reduced minimum width for smaller buttons */
+    min-width: 80px;
   }
 }
 
@@ -184,7 +209,6 @@ button:hover {
   background-color: #002222 !important;
 }
 
-/* Further reduce visibility of board notation */
 .notation-322f9 {
   color: rgba(208, 225, 225, 0.2) !important;
   font-size: 10px !important;
@@ -197,44 +221,24 @@ button:hover {
   background-color: rgba(0, 255, 255, 0.2) !important;
 }
 
-.highlight1-32417 {
-  box-shadow: inset 0 0 3px 3px rgba(0, 255, 255, 0.5) !important;
-  background-color: rgba(0, 255, 255, 0.2) !important;
-}
-
-.highlight2-9c5d2 {
-  box-shadow: inset 0 0 3px 3px rgba(255, 0, 0, 0.5) !important;
-  background-color: rgba(255, 0, 0, 0.2) !important;
-}
-
-/* Illegal move highlight */
 .square-55d63.illegal-move {
   background-color: maroon !important;
   transition: background-color 0.5s ease;
 }
 
-/* Override any inline styles for highlights */
-.square-55d63 {
-  box-shadow: none !important;
-}
-
-/* Additional styles for pieces */
 #chessboard .piece {
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
   transition: transform 0.2s ease;
 }
 
-/* Subtle hover effect */
 #chessboard .piece:hover {
   transform: scale(1.05);
 }
 
-/* Further reduce brightness of white pieces */
 #chessboard .piece.w {
   filter: brightness(70%) contrast(100%) drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
 
-/* Make black pieces stand out even more */
 #chessboard .piece.b {
   filter: brightness(60%) contrast(130%) drop-shadow(0 0 3px rgba(0, 0, 0, 0.8));
 }
