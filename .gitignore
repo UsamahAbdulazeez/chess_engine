@@ -4,3 +4,6 @@ move_to_int.pkl
 
 # Ignore the entire data folder
 data/
+
+# Backend url
+**/config.js

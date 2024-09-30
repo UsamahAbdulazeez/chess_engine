@@ -1,3 +1,5 @@
+const backendUrl = config.BACKEND_URL;
+
 let board = null;
 let game = new Chess();
 let playerColor = null;
@@ -151,14 +153,31 @@ function initBoard() {
 function makeAIMove() {
     if (game.game_over()) return;
 
-    setTimeout(() => {
-        const moves = game.moves();
-        const move = moves[Math.floor(Math.random() * moves.length)];
-        game.move(move);
-        board.position(game.fen());
-        updateStatus();
-    }, 250);
+    const fen = game.fen();
+
+    fetch(backendUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ fen: fen })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const move = data.move;
+        if (move) {
+            game.move({ from: move.slice(0, 2), to: move.slice(2, 4), promotion: 'q' });
+            board.position(game.fen());
+            updateStatus();
+        } else {
+            console.error('Invalid move from backend:', move);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching AI move:', error);
+    });
 }
+
 
 function updateStatus() {
     let status = '';
