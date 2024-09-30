@@ -1,0 +1,6 @@
+# Ignore machine learning model files
+chess_model.pth
+move_to_int.pkl
+
+# Ignore the entire data folder
+data/
