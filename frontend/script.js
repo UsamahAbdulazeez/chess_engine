@@ -36,16 +36,6 @@ function highlightLegalMoves(square) {
     });
 
     moves.forEach(move => {
-<<<<<<< Updated upstream
-        $(`#${move.to}`).addClass('highlight-move');
-    });
-
-    $(`#${square}`).addClass('highlight-square');
-}
-
-function removeHighlights() {
-    $('.square-55d63').removeClass('highlight-square highlight-move');
-=======
         $(`.square[data-square='${move.to}']`).addClass('highlight-move');
     });
 
@@ -54,7 +44,6 @@ function removeHighlights() {
 
 function removeHighlights() {
     $('.square').removeClass('highlight-move highlight-source');
->>>>>>> Stashed changes
 }
 
 function onDragStart(source, piece) {
@@ -111,22 +100,6 @@ function onClickSquare(square) {
     }
 }
 
-<<<<<<< Updated upstream
-function initBoard() {
-    const config = {
-        draggable: true,
-        position: 'start',
-        pieceTheme: function(piece) {
-            return getPieceImage(piece);
-        },
-        onDragStart: onDragStart,
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd,
-        onSquareClick: onClickSquare
-    };
-    board = Chessboard('chessboard', config);
-    updateStatus();
-=======
 function onMouseoverSquare(square, piece) {
     if (isMobile) return; // Don't highlight on mobile devices
 
@@ -147,7 +120,6 @@ function onMouseoverSquare(square, piece) {
 function onMouseoutSquare(square, piece) {
     if (isMobile) return; // Don't remove highlights on mobile devices
     removeHighlights();
->>>>>>> Stashed changes
 }
 
 function onSnapEnd() {
@@ -233,10 +205,7 @@ function undoMove() {
 
 function flipBoard() {
     board.flip();
-<<<<<<< Updated upstream
-=======
     customizeBoardColors();
->>>>>>> Stashed changes
 }
 
 function setPlayerColor(color) {
@@ -247,12 +216,8 @@ function setPlayerColor(color) {
     // Flip the board if the user selects black
     if (color === 'b') {
         board.flip();
-<<<<<<< Updated upstream
-        setTimeout(makeAIMove, 250); // AI makes the first move
-=======
         customizeBoardColors();
         setTimeout(makeAIMove, 250);
->>>>>>> Stashed changes
     }
 }
 
