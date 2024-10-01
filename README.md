@@ -4,6 +4,8 @@ Welcome to the **Chess AI Engine** project! This is a web-based chess game where
 
 Due to processing power constraints, the AI was trained on a subset of 100,000 games out of a much larger dataset (2.5 million games). Despite the limited dataset, the AI is capable of competitive move predictions.
 
+**[Play the Chess AI Game here](https://beat-usamahs-bot.netlify.app/)**
+
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Dataset](#dataset)
