@@ -4,3 +4,5 @@ torch==1.8.1
 numpy==1.20.3
 python-chess==0.28.0
 flask-cors==3.0.10
+flask-jwt-extended==4.3.1
+python-dotenv==0.19.2

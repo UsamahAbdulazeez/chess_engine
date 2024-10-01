@@ -7,3 +7,7 @@ data/
 
 # Backend url
 **/config.js
+
+
+# The JWT secret key
+**/.env

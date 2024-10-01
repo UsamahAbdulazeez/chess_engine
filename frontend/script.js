@@ -1,5 +1,7 @@
 const backendUrl = config.BACKEND_URL;
+let jwtToken = null;
 
+// Initialize the chessboard and game
 let board = null;
 let game = new Chess();
 let playerColor = null;
@@ -11,6 +13,7 @@ function detectMobileDevice() {
     isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 }
 
+// Piece images from chess.com theme
 const pieceImages = {
     'wP': 'https://images.chesscomfiles.com/chess-themes/pieces/neo/150/wp.png',
     'wN': 'https://images.chesscomfiles.com/chess-themes/pieces/neo/150/wn.png',
@@ -26,16 +29,15 @@ const pieceImages = {
     'bK': 'https://images.chesscomfiles.com/chess-themes/pieces/neo/150/bk.png'
 };
 
+// Helper to get the image for a piece
 function getPieceImage(piece) {
     return pieceImages[piece] || '';
 }
 
+// Highlight legal moves for a selected piece
 function highlightLegalMoves(square) {
     removeHighlights();
-    const moves = game.moves({
-        square: square,
-        verbose: true
-    });
+    const moves = game.moves({ square: square, verbose: true });
 
     moves.forEach(move => {
         $(`.square[data-square='${move.to}']`).addClass('highlight-move');
@@ -44,15 +46,14 @@ function highlightLegalMoves(square) {
     $(`.square[data-square='${square}']`).addClass('highlight-source');
 }
 
+// Remove move highlights
 function removeHighlights() {
     $('.square').removeClass('highlight-move highlight-source');
 }
 
+// Handle drag start
 function onDragStart(source, piece) {
-    if (game.game_over() || 
-        (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-        (game.turn() === 'b' && piece.search(/^w/) !== -1) ||
-        (playerColor && piece.charAt(0) !== playerColor)) {
+    if (game.game_over() || (game.turn() === 'w' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^w/) !== -1) || (playerColor && piece.charAt(0) !== playerColor)) {
         return false;
     }
 
@@ -60,13 +61,10 @@ function onDragStart(source, piece) {
     return true;
 }
 
+// Handle piece drop
 function onDrop(source, target) {
     removeHighlights();
-    const move = game.move({
-        from: source,
-        to: target,
-        promotion: 'q'
-    });
+    const move = game.move({ from: source, to: target, promotion: 'q' });
 
     if (move === null) return 'snapback';
 
@@ -74,6 +72,7 @@ function onDrop(source, target) {
     setTimeout(makeAIMove, 250);
 }
 
+// Handle square click (for touch devices)
 function onClickSquare(square) {
     if (!selectedPiece) {
         const piece = game.get(square);
@@ -82,12 +81,7 @@ function onClickSquare(square) {
             highlightLegalMoves(square);
         }
     } else {
-        const move = game.move({
-            from: selectedPiece,
-            to: square,
-            promotion: 'q'
-        });
-
+        const move = game.move({ from: selectedPiece, to: square, promotion: 'q' });
         if (move) {
             removeHighlights();
             selectedPiece = null;
@@ -102,37 +96,36 @@ function onClickSquare(square) {
     }
 }
 
+// Mouseover highlight for legal moves
 function onMouseoverSquare(square, piece) {
-    if (isMobile) return; // Don't highlight on mobile devices
+    if (isMobile) return;
 
-    const moves = game.moves({
-        square: square,
-        verbose: true
-    });
-
+    const moves = game.moves({ square: square, verbose: true });
     if (moves.length === 0) return;
 
     $(`.square[data-square='${square}']`).addClass('highlight-source');
-
     moves.forEach(move => {
         $(`.square[data-square='${move.to}']`).addClass('highlight-move');
     });
 }
 
+// Mouseout: Remove highlights
 function onMouseoutSquare(square, piece) {
-    if (isMobile) return; // Don't remove highlights on mobile devices
+    if (isMobile) return;
     removeHighlights();
 }
 
+// Sync the board after a move
 function onSnapEnd() {
     board.position(game.fen());
 }
 
+// Initialize the chessboard
 function initBoard() {
     detectMobileDevice();
 
     const config = {
-        draggable: true, // Enable drag-and-drop for all devices
+        draggable: true,
         position: 'start',
         pieceTheme: getPieceImage,
         onDragStart: onDragStart,
@@ -140,7 +133,7 @@ function initBoard() {
         onMouseoverSquare: onMouseoverSquare,
         onMouseoutSquare: onMouseoutSquare,
         onSnapEnd: onSnapEnd,
-        onSquareClick: onClickSquare // Add click handler for all devices
+        onSquareClick: onClickSquare  // Touch handler
     };
 
     board = Chessboard('chessboard', config);
@@ -149,28 +142,45 @@ function initBoard() {
     customizeBoardColors();
 }
 
-// Additional functionality: AI moves and handling game status
+// Fetch JWT token from backend and store it
+async function fetchJWTToken() {
+    try {
+        const response = await fetch(backendUrl + '/login', { method: 'POST' });
+        const data = await response.json();
+        jwtToken = data.access_token;
+        console.log("JWT Token acquired:", jwtToken);
+    } catch (error) {
+        console.error("Error fetching JWT token:", error);
+    }
+}
+
+// AI move logic with JWT token and UCI notation handling
 function makeAIMove() {
     if (game.game_over()) return;
 
     const fen = game.fen();
 
-    fetch(backendUrl, {
+    fetch(backendUrl + '/predict', {
         method: 'POST',
         headers: {
+            'Authorization': `Bearer ${jwtToken}`,  // Send JWT token
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ fen: fen })
     })
     .then(response => response.json())
     .then(data => {
-        const move = data.move;
-        if (move) {
-            game.move({ from: move.slice(0, 2), to: move.slice(2, 4), promotion: 'q' });
-            board.position(game.fen());
-            updateStatus();
+        const uciMove = data.move;  // Backend returns move in UCI format (e.g., "e2e4")
+        if (uciMove) {
+            const move = game.move({ from: uciMove.slice(0, 2), to: uciMove.slice(2, 4), promotion: 'q' });
+            if (move) {
+                board.position(game.fen());
+                updateStatus();
+            } else {
+                console.error('Invalid move from backend:', uciMove);
+            }
         } else {
-            console.error('Invalid move from backend:', move);
+            console.error('No valid move received from backend');
         }
     })
     .catch(error => {
@@ -178,7 +188,7 @@ function makeAIMove() {
     });
 }
 
-
+// Update game status
 function updateStatus() {
     let status = '';
     if (game.in_checkmate()) {
@@ -194,6 +204,7 @@ function updateStatus() {
     $('#status').text(status);
 }
 
+// Customize board colors
 function customizeBoardColors() {
     $('.square').each(function() {
         if ($(this).hasClass('white-1e1d7')) {
@@ -204,18 +215,20 @@ function customizeBoardColors() {
     });
 }
 
+// Restart the game
 function restartGame() {
     game.reset();
     board.start();
     playerColor = null;
     selectedPiece = null;
     updateStatus();
-    $('#play-as').show();  // Show the color selection buttons again
-    $('#chessboard').hide();  // Hide the chessboard
-    $('#status').hide();  // Hide the status message
-    $('.button-container').hide();  // Hide the game buttons
+    $('#play-as').show();
+    $('#chessboard').hide();
+    $('#status').hide();
+    $('.button-container').hide();
 }
 
+// Undo the last move
 function undoMove() {
     if (game.history().length > 1) {
         game.undo();
@@ -225,20 +238,21 @@ function undoMove() {
     }
 }
 
+// Flip the chessboard
 function flipBoard() {
     board.flip();
     customizeBoardColors();
 }
 
+// Set the player's color and start the game
 function setPlayerColor(color) {
     playerColor = color;
-    $('#play-as').hide();  // Hide the color selection buttons
-    $('#chessboard').show();  // Show the chessboard
-    $('#status').show();  // Show the status message
-    $('.button-container').show();  // Show the game buttons
+    $('#play-as').hide();
+    $('#chessboard').show();
+    $('#status').show();
+    $('.button-container').show();
     initBoard();
 
-    // Flip the board if the user selects black
     if (color === 'b') {
         board.flip();
         customizeBoardColors();
@@ -246,12 +260,14 @@ function setPlayerColor(color) {
     }
 }
 
+// Initialize everything when the page loads
 $(document).ready(function() {
     detectMobileDevice();
+    fetchJWTToken();  // Fetch JWT token when the page loads
     $('#play-as').show();
-    $('#chessboard').hide();  // Hide the chessboard on load
-    $('#status').hide();  // Hide the status message on load
-    $('.button-container').hide();  // Hide the game buttons on load
+    $('#chessboard').hide();
+    $('#status').hide();
+    $('.button-container').hide();
 
     // Add touch event listeners for mobile devices
     if (isMobile) {
@@ -262,6 +278,7 @@ $(document).ready(function() {
     }
 });
 
+// Handle board resizing
 $(window).on('resize', function() {
     if (board !== null) {
         board.resize();
