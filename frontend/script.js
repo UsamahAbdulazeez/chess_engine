@@ -140,17 +140,25 @@ function initBoard() {
 
     updateStatus();
     customizeBoardColors();
+    
+    // Disable board interaction until JWT token is fetched
+    $('.square-55d63').css('pointer-events', 'none');
 }
 
-// Fetch JWT token from backend and store it
+// Fetch JWT token and enable the board once acquired
 async function fetchJWTToken() {
     try {
         const response = await fetch(backendUrl + '/login', { method: 'POST' });
         const data = await response.json();
         jwtToken = data.access_token;
         console.log("JWT Token acquired:", jwtToken);
+
+        // Enable interaction on the chessboard once the token is fetched
+        $('.square-55d63').css('pointer-events', 'auto');
+
     } catch (error) {
         console.error("Error fetching JWT token:", error);
+        alert('Failed to authenticate. Please try refreshing the page.');
     }
 }
 
@@ -263,7 +271,8 @@ function setPlayerColor(color) {
 // Initialize everything when the page loads
 $(document).ready(function() {
     detectMobileDevice();
-    fetchJWTToken();  // Fetch JWT token when the page loads
+    initBoard();  // Render the board immediately but with interaction disabled
+    fetchJWTToken();  // Fetch JWT token and enable board interaction after it's fetched
     $('#play-as').show();
     $('#chessboard').hide();
     $('#status').hide();
